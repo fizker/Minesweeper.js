@@ -21,5 +21,10 @@ THE SOFTWARE.
 ------------
 
 This project will end up being a multiplayer minesweeper with built-in chat. 
-A Node.js server will be included. Installation instructions will be included
-when there is something to install.
+A Node.js server is included.
+
+SERVER:
+To get a functional server, you need node.js installed. It can be downloaded 
+and compiled from nodejs.org, and there are plenty of guides online for that.
+Then run server.js in node ($ node server.js), and point your browser to 
+localhost:8080.

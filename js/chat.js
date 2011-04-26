@@ -44,11 +44,12 @@ var ChatRoom = (function() {
 			}
 		};
 		this.source.onmessage = function(e) {
-			var json;
-			if(!e.data[0] == '{') {
+			var json = JSON.parse(e.data);
+			if(json.password) {
+				console.log('first message received, id: '+json.id);
+				this.credentials = json;
 				return;
 			}
-			json = JSON.parse(e.data);
 			this.appendMessage(json.sender, json.msg, Date.parseISOString(json.timestamp));
 		}.bind(this);
 	};
@@ -87,6 +88,16 @@ var ChatRoom = (function() {
 	
 	function submit() {
 		var text = this.elements.input.value;
+		new AjaxRequest('/chat/say/', {
+			method: 'post',
+			onload: function() {},
+			data: JSON.stringify({
+				msg: text,
+				sender: this.username,
+				id: this.credentials.id,
+				password: this.credentials.password
+			})
+		});
 		this.elements.input.value = '';
 		this.appendMessage(this.username, text);
 	};
@@ -110,7 +121,14 @@ var ChatRoom = (function() {
 		submit: submit,
 		appendMessage: appendMessage,
 		setName: setName,
-		register: register
+		register: register,
+		connect: register,
+		disconnect: function() {
+			if(this.source) {
+				this.source.close();
+				this.source = null;
+			}
+		}
 	};
 	return ChatRoom;
 }());

@@ -6,7 +6,7 @@
 		<base href="./">
 		<link type="text/css" rel="stylesheet" href="css/client.css">
 	</head>
-	<body class="not_logged_in">
+	<body class="not_logged_in" onunload="chatroom.disconnect();">
 		<div id="loginscreen" class="c_abs c_fill c_hide">
 			<form onsubmit="return login(this);" class="c_abs c_center">
 				<input autofocus="autofocus" type="text" name="username"/>
@@ -20,7 +20,7 @@
 			<div id="header" class="c_rel">
 				<input class="c_btn c_abs btn_lobby" type="button" value="Go to lobby" onclick="console.log('hej');"/>
 				<span class="chat_user"></span>
-				<input class="c_btn c_abs btn_signoff" type="button" value="Sign off"/>
+				<input class="c_btn c_abs btn_signoff" type="button" value="Sign off" onclick="chatroom.disconnect();"/>
 			</div>
 			<div id="body" class="c_abs c_fill">
 				<div id="chat"></div>

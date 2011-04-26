@@ -28,23 +28,42 @@ function registerServices() {
 var users = [];
 var chatId = 1;
 handleChatRegister = function handleChatRegister(request, response) {
-	var data = '', user = url.parse(request.url, true);
-	users.push({ name: user.query.user, response: response, sse: new server.sse(response, 'welcome') });
-	
-	setTimeout(function() {
-		console.log('Sending to user');
-		users.forEach(function(user) {
-			user.sse.send('{"sender": "Server", "msg": "Very important message!", "timestamp": "'+(new Date().toISOString())+'"}');
-		});
-		setTimeout(function() {
-			console.log('Sending to user');
-			users.forEach(function(user) {
-				user.sse.send('{"sender": "Server", "msg": "Very important message!", "timestamp": "'+(new Date().toISOString())+'"}');
-			});
-		}, 4000);
-	}, 1000);
+	var key = 'abc', user = url.parse(request.url, true);
+	console.log('registering user: ', user.query.user);
+	users.push({
+		name: user.query.user,
+		response: response,
+		sse: new server.sse(response, JSON.stringify({
+			id: users.length,
+			password: key
+		})),
+		password: key
+	});
 };
-handleChatMessage = function handleChatMessage(request, response) {};
+handleChatMessage = function handleChatMessage(request, response) {
+	console.log('message received');
+	var data = '';
+	request.addListener('data', function(d) {
+		data += d;
+	});
+	request.addListener('end', function() {
+		data = JSON.parse(data);
+		console.log(data);
+		var msg = {
+			msg: data.msg,
+			sender: data.sender,
+			timestamp: new Date().toISOString()
+		};
+		users.forEach(function(user, id) {
+			if(data.id == id) {
+				return;
+			}
+			console.log('sending to ', user.name, user.sse);
+			user.sse.send(JSON.stringify(msg));
+		});
+		response.end();
+	});
+};
 handleChatChangeRoom = function handleChatChangeRoom(request, response) {};
 handleChatLeave = function handleChatLeave(request, response) {};
 

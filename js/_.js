@@ -6,10 +6,13 @@ function login(form) {
 	document.body.removeClass(classNames).addClass('logging_in');
 	chatroom.register(username, {
 		onopen: function() {
+			console.log('opening');
 			document.body.removeClass(classNames).addClass('logged_in');
 			chatroom.setName(username);
 		},
-		onclose: function() {}
+		onclose: function() {
+			console.log('closing');
+		}
 	});
 	return false;
 }

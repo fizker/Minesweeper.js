@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Mine Sweeper</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<base href="./">
+		<link type="text/css" rel="stylesheet" href="css/_.css">
+	</head>
+	<body class="not_logged_in">
+		<div id="loginscreen" class="c_abs c_fill c_hide">
+			<form onsubmit="return login(this);" class="c_abs c_center">
+				<input autofocus="autofocus" type="text" name="username"/>
+				<input type="submit" value="Log in"/>
+			</form>
+		</div>
+		<div id="loggingIn" class="c_hide">
+			Logging in...
+		</div>
+		<div id="loggedIn" class="c_hide">
+			<div id="header" class="c_rel">
+				<input class="c_btn c_abs btn_lobby" type="button" value="Go to lobby" onclick="console.log('hej');"/>
+				<input class="c_btn c_abs btn_signoff" type="button" value="Sign off"/>
+			</div>
+			<div id="body" class="c_abs c_fill">
+				<div id="chat"></div>
+				<div id="lobby"></div>
+				<div id="game"></div>
+			</div>
+		</div>
+		
+		<script src="http://static.finc.dk/js/lib.js"></script>
+		<script src="js/chat.js"></script>
+		<script src="js/lobby.js"></script>
+		<script src="js/_.js"></script>
+	</body>
+</html>

@@ -33,25 +33,37 @@ var ChatRoom = (function() {
 		};
 	};
 	
+	var types = {
+		disconnect: function(data) {
+			this.appendMessage('Server', data.sender+' left the chat', data.timestamp);
+		},
+		connect: function(data) {
+			this.appendMessage('Server', data.sender+' joined the chat', data.timestamp);
+		},
+		message: function(data) {
+			this.appendMessage(data.sender, data.msg, data.timestamp);
+		}
+	};
 	function register(name, callbacks) {
-		this.source = new EventSource('/chat/register/?user='+name);
-		this.source.onopen = function(e) {
+		var socket = this.socket = new io.Socket('localhost'),
+			self = this;
+		socket.connect();
+		socket.on('connect', function() {
 			callbacks.onopen();
-		};
-		this.source.onerror = function(e) {
-			if(e.eventPhase == EventSource.CLOSED) {
-				callbacks.onclose();
-			}
-		};
-		this.source.onmessage = function(e) {
-			var json = JSON.parse(e.data);
-			if(json.password) {
-				console.log('first message received, id: '+json.id);
-				this.credentials = json;
-				return;
-			}
-			this.appendMessage(json.sender, json.msg, Date.parseISOString(json.timestamp));
-		}.bind(this);
+		});
+		socket.on('message', function(data) {
+			data = JSON.parse(data);
+			console.log('message received', data);
+			data.timestamp = Date.parseISOString(data.timestamp);
+			types[data.type].call(self, data);
+		});
+		socket.on('disconnect', function() {
+			callbacks.onclose();
+		});
+		socket.send(JSON.stringify({
+			type: 'connect',
+			name: name
+		}));
 	};
 	
 	function setName(name) {
@@ -88,16 +100,10 @@ var ChatRoom = (function() {
 	
 	function submit() {
 		var text = this.elements.input.value;
-		new AjaxRequest('/chat/say/', {
-			method: 'post',
-			onload: function() {},
-			data: JSON.stringify({
-				msg: text,
-				sender: this.username,
-				id: this.credentials.id,
-				password: this.credentials.password
-			})
-		});
+		this.socket.send(JSON.stringify({
+			type: 'message',
+			msg: text
+		}));
 		this.elements.input.value = '';
 		this.appendMessage(this.username, text);
 	};
@@ -123,10 +129,10 @@ var ChatRoom = (function() {
 		setName: setName,
 		register: register,
 		connect: register,
-		disconnect: function() {
-			if(this.source) {
-				this.source.close();
-				this.source = null;
+		disconnect: function disconnect() {
+			if(this.socket) {
+				this.socket.disconnect();
+				this.socket = null;
 			}
 		}
 	};

@@ -4,6 +4,8 @@ var HOST = null, // localhost
 var sys = require('sys'),
 	url = require('url'),
 	server = require('./js/server.js'),
+	io = require('socket.io'),
+	socket = io.listen(server.server),
 	handleChatRegister,
 	handleChatMessage,
 	handleChatLeave,
@@ -19,53 +21,67 @@ function registerServices() {
 		'js/chat.js', 'js/lobby.js', 'js/_.js'
 	]));
 	
+	/*
 	server.register('/chat/register/', handleChatRegister);
 	server.register('/chat/enterroom/', handleChatChangeRoom);
 	server.register('/chat/say/', handleChatMessage);
 	server.register('/chat/leave/', handleChatLeave);
+	*/
 };
 
 var users = [];
-var chatId = 1;
-handleChatRegister = function handleChatRegister(request, response) {
-	var key = 'abc', user = url.parse(request.url, true);
-	console.log('registering user: ', user.query.user);
-	users.push({
-		name: user.query.user,
-		response: response,
-		sse: new server.sse(response, JSON.stringify({
-			id: users.length,
-			password: key
-		})),
-		password: key
+
+function notifyUsers(msg, exclusion) {
+	if(typeof(msg) !== 'string') {
+		msg = JSON.stringify(msg);
+	}
+	users.forEach(function(client) {
+		if(client == exclusion) {
+			return;
+		}
+		client.send(msg);
 	});
 };
-handleChatMessage = function handleChatMessage(request, response) {
-	console.log('message received');
-	var data = '';
-	request.addListener('data', function(d) {
-		data += d;
-	});
-	request.addListener('end', function() {
+
+function timestamp() {
+	return new Date().toISOString();
+};
+
+socket.on('connection', function(client) {
+	users.push(client);
+	client.on('message', function(data) {
 		data = JSON.parse(data);
-		console.log(data);
-		var msg = {
-			msg: data.msg,
-			sender: data.sender,
-			timestamp: new Date().toISOString()
-		};
-		users.forEach(function(user, id) {
-			if(data.id == id) {
-				return;
-			}
-			console.log('sending to ', user.name, user.sse);
-			user.sse.send(JSON.stringify(msg));
-		});
-		response.end();
+		if(data.type == 'connect') {
+			client.minesweeper = {
+				name: data.name
+			};
+			notifyUsers({
+				sender: data.name,
+				type: 'connect',
+				timestamp: timestamp()
+			}, client);
+			return;
+		}
+		if(data.msg) {
+			data = {
+				type: 'message',
+				msg: data.msg,
+				sender: client.minesweeper.name,
+				timestamp: timestamp()
+			};
+			notifyUsers(data, client);
+		}
 	});
-};
-handleChatChangeRoom = function handleChatChangeRoom(request, response) {};
-handleChatLeave = function handleChatLeave(request, response) {};
+	client.on('disconnect', function() {
+		var msg = {
+			sender: client.minesweeper.name,
+			type: "disconnect",
+			timestamp: timestamp()
+		};
+		users.splice(users.indexOf(client), 1);
+		notifyUsers(msg);
+	});
+});
 
 registerServices();
 

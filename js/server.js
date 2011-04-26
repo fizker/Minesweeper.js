@@ -166,4 +166,5 @@
 	exports.register = addHandler;
 	exports.static = staticHandler;
 	exports.sse = SSEopen;
+	exports.server = server;
 }(exports));

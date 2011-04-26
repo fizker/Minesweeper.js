@@ -4,10 +4,13 @@ function login(form) {
 		username = input.value,
 		classNames = 'not_logged_in logged_in logging_in';
 	document.body.removeClass(classNames).addClass('logging_in');
-	setTimeout(function() {
-		document.body.removeClass(classNames).addClass('logged_in');
-		chatroom.setName(username);
-	}, 1000);
+	chatroom.register(username, {
+		onopen: function() {
+			document.body.removeClass(classNames).addClass('logged_in');
+			chatroom.setName(username);
+		},
+		onclose: function() {}
+	});
 	return false;
 }
 

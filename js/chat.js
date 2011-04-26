@@ -33,6 +33,26 @@ var ChatRoom = (function() {
 		};
 	};
 	
+	function register(name, callbacks) {
+		this.source = new EventSource('/chat/register/?user='+name);
+		this.source.onopen = function(e) {
+			callbacks.onopen();
+		};
+		this.source.onerror = function(e) {
+			if(e.eventPhase == EventSource.CLOSED) {
+				callbacks.onclose();
+			}
+		};
+		this.source.onmessage = function(e) {
+			var json;
+			if(!e.data[0] == '{') {
+				return;
+			}
+			json = JSON.parse(e.data);
+			this.appendMessage(json.sender, json.msg, Date.parseISOString(json.timestamp));
+		}.bind(this);
+	};
+	
 	function setName(name) {
 		this.username = name;
 		this.elements.username.update(name);
@@ -89,7 +109,8 @@ var ChatRoom = (function() {
 		init: init,
 		submit: submit,
 		appendMessage: appendMessage,
-		setName: setName
+		setName: setName,
+		register: register
 	};
 	return ChatRoom;
 }());

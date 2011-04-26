@@ -137,8 +137,33 @@
 		};
 	};
 	
+	function SSEopen(response, initialMessage) {
+		var id = 0;
+		response.writeHead(200, {
+			'Content-type': 'text/event-stream',
+			'Cache-Control': 'no-cache',
+			'Connection': 'keep-alive'
+		});
+		
+		response.write('id: '+id+'\n');
+		response.write('data: '+initialMessage+'\n\n');
+		id++;
+		return {
+			send: function(msg) {
+				response.write('id: '+id+'\n');
+				response.write('data: '+msg+'\n\n');
+				id++;
+			},
+			close: function() {
+				response.writeHead(500);
+				response.end();
+			}
+		};
+	};
+	
 	exports.listen = open;
 	exports.close = close;
 	exports.register = addHandler;
 	exports.static = staticHandler;
+	exports.sse = SSEopen;
 }(exports));

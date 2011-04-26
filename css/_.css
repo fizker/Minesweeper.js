@@ -11,16 +11,8 @@ blockquote, q { quotes: none; }
 blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
 table { border-collapse: collapse; border-spacing: 0; }
 
-#loginscreen {}
-#loggedIn {}
-
 .c_hide {
 	display: none;
-}
-body.not_logged_in #loginscreen, 
-body.logged_in #loggedIn, 
-body.logging_in #loggingIn {
-	display: block;
 }
 
 .c_center {
@@ -43,57 +35,4 @@ body.logging_in #loggingIn {
 .c_striped {}
 .c_striped:nth-child(even) {
 	background-color: #b0e7ff;
-}
-
-#header {
-	height: 40px;
-	background: #9225ff;
-}
-.btn_lobby {
-	top: 8px;
-	left: 10px;
-}
-.btn_signoff {
-	top: 8px;
-	right: 10px;
-}
-
-#body {
-	top: 40px;
-}
-
-.chat_send {
-	width: 100px;
-	bottom: 0px;
-	right: 0px;
-}
-.chat_input {
-	top: auto;
-	right: 100px;
-}
-
-.chat_messages {
-	bottom: 22px;
-	white-space: nowrap;
-}
-.chat_row {
-	position: relative;
-	padding-left: 80px;
-}
-.chat_row * {
-	vertical-align: top;
-}
-.chat_sender, .chat_time {
-	position: absolute;
-}
-.chat_sender {
-	left: 40px;
-}
-.chat_time {
-	left: 0px;
-}
-.chat_msg {
-	display: inline-block;
-	white-space: normal;
-	margin-left: 40px;
 }

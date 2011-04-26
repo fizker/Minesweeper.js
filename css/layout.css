@@ -1,0 +1,28 @@
+
+#loginscreen {}
+#loggedIn {}
+
+body.not_logged_in #loginscreen, 
+body.logged_in #loggedIn, 
+body.logging_in #loggingIn {
+	display: block;
+}
+
+#header {
+	height: 20px;
+	background: #9225ff;
+	text-align: center;
+	padding: 10px;
+}
+.btn_lobby {
+	top: 8px;
+	left: 10px;
+}
+.btn_signoff {
+	top: 8px;
+	right: 10px;
+}
+
+#body {
+	top: 40px;
+}

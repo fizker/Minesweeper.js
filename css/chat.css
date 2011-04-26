@@ -1,0 +1,39 @@
+
+.chat_send {
+	width: 100px;
+	bottom: 0px;
+	right: 0px;
+}
+.chat_input {
+	top: auto;
+	right: 100px;
+}
+
+.chat_messages {
+	bottom: 22px;
+	white-space: nowrap;
+}
+.chat_row {
+	position: relative;
+	padding-left: 80px;
+}
+.chat_row * {
+	vertical-align: top;
+}
+.chat_sender, .chat_time {
+	position: absolute;
+}
+.chat_sender {
+	left: 40px;
+}
+.chat_time {
+	left: 0px;
+}
+.chat_msg {
+	display: inline-block;
+	white-space: normal;
+	margin-left: 40px;
+}
+.chat_user {
+	background: white;
+}

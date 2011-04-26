@@ -6,6 +6,7 @@ function login(form) {
 	document.body.removeClass(classNames).addClass('logging_in');
 	setTimeout(function() {
 		document.body.removeClass(classNames).addClass('logged_in');
+		chatroom.setName(username);
 	}, 1000);
 	return false;
 }

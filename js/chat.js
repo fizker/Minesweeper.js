@@ -6,7 +6,7 @@ var ChatRoom = (function() {
 	};
 	
 	function init(container) {
-		var messages, input;
+		var messages, input, button;
 		messages = document.createElement('div');
 		messages.className = 'chat_messages c_abs c_fill';
 		container.appendChild(messages);
@@ -28,8 +28,14 @@ var ChatRoom = (function() {
 			container: container,
 			messages: messages,
 			input: input,
-			button: button
+			button: button,
+			username: document.down('.chat_user')
 		};
+	};
+	
+	function setName(name) {
+		this.username = name;
+		this.elements.username.update(name);
 	};
 	
 	function formatDate(date) {
@@ -47,13 +53,13 @@ var ChatRoom = (function() {
 		rowEl.appendChild(timeEl);
 		
 		senderEl = document.createElement('span');
-		senderEl.innerHTML = sender;
+		senderEl.update(sender);
 		senderEl.className = 'chat_sender';
 		rowEl.appendChild(senderEl);
 		
 		msgEl = document.createElement('div');
 		msgEl.className = 'chat_msg';
-		msgEl.innerHTML = msg;
+		msgEl.update(msg);
 		rowEl.appendChild(msgEl);
 
 		this.elements.messages.appendChild(rowEl);
@@ -62,7 +68,7 @@ var ChatRoom = (function() {
 	function submit() {
 		var text = this.elements.input.value;
 		this.elements.input.value = '';
-		this.appendMessage('Bente', text);
+		this.appendMessage(this.username, text);
 	};
 	
 	function handleKeyPresses(evt) {
@@ -82,7 +88,8 @@ var ChatRoom = (function() {
 	ChatRoom.prototype = {
 		init: init,
 		submit: submit,
-		appendMessage: appendMessage
+		appendMessage: appendMessage,
+		setName: setName
 	};
 	return ChatRoom;
 }());

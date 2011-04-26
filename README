@@ -21,7 +21,8 @@ THE SOFTWARE.
 ------------
 
 This project will end up being a multiplayer minesweeper with built-in chat. 
-A Node.js server is included.
+A Node.js server is included, and node needs to be able to access the Socket.IO 
+module.
 
 SERVER:
 To get a functional server, you need node.js installed. It can be downloaded 
